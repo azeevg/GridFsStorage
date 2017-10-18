@@ -1,0 +1,44 @@
+version: '3.2'
+
+secrets:
+  db_init:
+    file: ./docker/secrets/db_init.js
+  mongo_root_password:
+    file: ./docker/secrets/mongo_root_password
+  mongo_root_username:
+    file: ./docker/secrets/mongo_root_username
+  mongo_root_database:
+    file: ./docker/secrets/mongo_root_database
+
+volumes:
+  mongo_storage:
+
+services:
+  controller:
+    image: "azeevg/controller"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - "mongodb"
+
+  mongodb:
+    image: "azeevg/mongo"
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: volume
+        source: mongo_storage
+        target: "/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongo_root_username
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_root_password
+      MONGO_INITDB_DATABASE_FILE: /run/secrets/mongo_root_database
+    secrets:
+      - source: db_init
+        target: db_init.js
+      - source: mongo_root_password
+        target: mongo_root_password
+      - source: mongo_root_username
+        target: mongo_root_username
+      - source: mongo_root_database
+        target: mongo_root_database

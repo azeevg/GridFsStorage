@@ -1,0 +1,10 @@
+*.iml
+.gradle/
+gradle/
+.idea/
+build/
+*.jar
+# be sure you added secrets into .gitignore
+!docker/secrets/
+*.zip
+gradlew*
